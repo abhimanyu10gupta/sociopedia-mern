@@ -31,23 +31,22 @@ app.use(bodyParser.json({limit: "30mb", extended: true}));
 app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 app.use(cors(
     {
-        origin: ['https://sociopedia-mern-41ra.onrender.com']
+        origin: ['https://sociopedia-mern-41ra.onrender.com', 'http://localhost:3001']
     }
 ));
 
 app.use(express.static(path.join(__dirname, ".." , "client/build")));
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
-app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '..', 'client/build', 'index.html'));
-});
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, ".." , "client/build")));
-    app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, '..', 'client/build', 'index.html'));
-    });
-}
+
+// if (process.env.NODE_ENV === 'production') {
+//     app.use(express.static(path.join(__dirname, ".." , "client/build")));
+//     app.use("/assets", express.static(path.join(__dirname, "public/assets")));
+
+//     app.get('*', (req, res) => {
+//         res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
+//     });
+// }
 /* FILE STORAGE */
 
 const storage = multer.diskStorage({
@@ -69,6 +68,9 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
+});
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
 mongoose.set('strictQuery', true);
@@ -76,6 +78,7 @@ mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology:true,
 }).then(() => {
+
     app.listen(PORT, () => console.log(`Server Port: ${PORT}`))
 
     /* ADD DATA ONE TIME */
